@@ -1,0 +1,24 @@
+services:
+  devcontainer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: community_devcontainer
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      SEAWEED_ENDPOINT: seaweed:${SEAWEED_S3_PORT}
+      SEAWEED_ACCESS_KEY: ${SEAWEED_ACCESS_KEY}
+      SEAWEED_SECRET_KEY: ${SEAWEED_SECRET_KEY}
+      SEAWEED_BUCKET: ${SEAWEED_BUCKET}
+    volumes:
+      - ..:/workspaces
+    command: sleep infinity
+    depends_on:
+      seaweed:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - default
